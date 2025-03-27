@@ -24,7 +24,6 @@ for tag in soup.find_all('h2'):
         titles.append(text)
     if len(titles) >= 20:
         break
-# If not enough titles, try h3 tags
 if len(titles) < 20:
     for tag in soup.find_all('h3'):
         text = tag.get_text().strip()
