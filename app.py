@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for, flash
 from lxml import etree
 
 app = Flask(__name__)
-app.secret_key = "some_secret_key"  # Required for flashing messages
+
 
 XML_FILE = "books.xml"
 XSL_FILE = "books.xsl"
