@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <title>Books by Theme</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Filter Books by Theme</h1>
+    <form method="post">
+      <label for="theme">Select Theme:</label>
+      <select id="theme" name="theme">
+        {% for theme in theme_list %}
+          <option value="{{ theme }}" {% if selected_theme and selected_theme == theme %}selected{% endif %}>{{ theme }}</option>
+        {% endfor %}
+      </select>
+      <input type="submit" value="Filter">
+    </form>
+    {% if books is defined %}
+      <h2>Books with Theme: {{ selected_theme }}</h2>
+      <ul>
+        {% for book in books %}
+          <li>
+            <a href="{{ url_for('book_details', title=book.find('title').text) }}">
+              {{ book.find('title').text }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+  </div>
+</body>
+</html>

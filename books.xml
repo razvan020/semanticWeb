@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<library xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="books.xsd">
+  <book>
+    <title>1. 1984 by George Orwell</title>
+    <themes>
+      <theme>Science Fiction</theme>
+      <theme>Science Fiction</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>2. Adventures of Huckleberry Finn by Mark Twain</title>
+    <themes>
+      <theme>Fantasy</theme>
+      <theme>Historical</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>3. The Adventures of Sherlock Holmes by Arthur Conan Doyle</title>
+    <themes>
+      <theme>Romance</theme>
+      <theme>Historical</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>4. The Alchemist by Paulo Coelho</title>
+    <themes>
+      <theme>Fantasy</theme>
+      <theme>Thriller</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>5. The Aleph and Other Stories by Jorge Luis Borges</title>
+    <themes>
+      <theme>Mystery</theme>
+      <theme>Thriller</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>6. Animal Farm by George Orwell</title>
+    <themes>
+      <theme>Mystery</theme>
+      <theme>Historical</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>7. Aesop's Fables by Aesop</title>
+    <themes>
+      <theme>Mystery</theme>
+      <theme>Mystery</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>8. Alice's Adventures in Wonderland by Lewis Carroll</title>
+    <themes>
+      <theme>Mystery</theme>
+      <theme>Historical</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>9. Anna Karenina by Leo Tolstoy</title>
+    <themes>
+      <theme>Science Fiction</theme>
+      <theme>Mystery</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>10. Anne of Green Gables by L.M. Montgomery</title>
+    <themes>
+      <theme>Historical</theme>
+      <theme>Thriller</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>11. As I Lay Dying by William Faulkner</title>
+    <themes>
+      <theme>Mystery</theme>
+      <theme>Thriller</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>12. Beloved by Toni Morrison</title>
+    <themes>
+      <theme>Historical</theme>
+      <theme>Romance</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>13. The Book Thief by Markus Zusak</title>
+    <themes>
+      <theme>Fantasy</theme>
+      <theme>Fantasy</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>14. Brave New World by Aldous Huxley</title>
+    <themes>
+      <theme>Fantasy</theme>
+      <theme>Historical</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>15. The Brothers Karamazov by Fyodor Dostoevsky</title>
+    <themes>
+      <theme>Science Fiction</theme>
+      <theme>Romance</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>16. Catch-22 by Joseph Heller</title>
+    <themes>
+      <theme>Thriller</theme>
+      <theme>Thriller</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>17. The Catcher in the Rye by J.D. Salinger</title>
+    <themes>
+      <theme>Science Fiction</theme>
+      <theme>Science Fiction</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>18. Charlie and the Chocolate Factory by Roald Dahl</title>
+    <themes>
+      <theme>Historical</theme>
+      <theme>Romance</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>19. Charlotte's Web by E. B White</title>
+    <themes>
+      <theme>Mystery</theme>
+      <theme>Science Fiction</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <book>
+    <title>20. The Call of the Wild by Jack London</title>
+    <themes>
+      <theme>Mystery</theme>
+      <theme>Fantasy</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
+  <user>
+    <name>John</name>
+    <surname>Doe</surname>
+    <readingLevel>Intermediate</readingLevel>
+    <preferredTheme>Mystery</preferredTheme>
+  </user>
+</library>

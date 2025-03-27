@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add User</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Add or Update User</h1>
+      <form method="post">
+        <label for="name">First Name:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="surname">Surname:</label>
+        <input type="text" id="surname" name="surname" required />
+
+        <label for="readingLevel">Reading Level:</label>
+        <input type="text" id="readingLevel" name="readingLevel" required />
+
+        <label for="preferredTheme">Preferred Theme:</label>
+        <input type="text" id="preferredTheme" name="preferredTheme" required />
+
+        <input type="submit" value="Save User" />
+      </form>
+      <br />
+      <a href="{{ url_for('index') }}">Back to Home</a>
+    </div>
+  </body>
+</html>

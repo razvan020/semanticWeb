@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Recommendations</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Book Recommendations</h1>
+      <p>
+        <strong>User Reading Level:</strong> {{ user_level }}<br />
+        <strong>Preferred Theme:</strong> {{ user_theme }}
+      </p>
+
+      <h2>Books by Reading Level</h2>
+      <ul>
+        {% for book in books_by_level %}
+        <li>
+          <a
+            href="{{ url_for('book_details', title=book.find('title').text) }}"
+          >
+            {{ book.find('title').text }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <h2>Books by Reading Level and Preferred Theme</h2>
+      <ul>
+        {% for book in books_by_level_theme %}
+        <li>
+          <a
+            href="{{ url_for('book_details', title=book.find('title').text) }}"
+          >
+            {{ book.find('title').text }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      <br />
+      <a href="{{ url_for('index') }}">Back to Home</a>
+    </div>
+  </body>
+</html>

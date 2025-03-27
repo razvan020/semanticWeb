@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="library">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="book" type="bookType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="user" type="userType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="bookType">
+        <xs:sequence>
+            <xs:element name="title" type="xs:string"/>
+            <xs:element name="themes" type="themesType"/>
+            <xs:element name="readingLevels" type="readingLevelsType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="themesType">
+        <xs:sequence>
+            <xs:element name="theme" type="xs:string" minOccurs="2" maxOccurs="2"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="readingLevelsType">
+        <xs:sequence>
+            <xs:element name="level1" type="xs:string"/>
+            <xs:element name="level2" type="xs:string"/>
+            <xs:element name="level3" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="userType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="surname" type="xs:string"/>
+            <xs:element name="readingLevel" type="xs:string"/>
+            <xs:element name="preferredTheme" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

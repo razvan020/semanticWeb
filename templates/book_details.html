@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Book Details</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Book Details</h1>
+      <p><strong>Title:</strong> {{ book.find('title').text }}</p>
+      <p>
+        <strong>Themes:</strong>
+        {% for theme in book.find('themes').findall('theme') %} {{ theme.text
+        }}{% if not loop.last %}, {% endif %} {% endfor %}
+      </p>
+      <p>
+        <strong>Reading Levels:</strong>
+        Level1: {{ book.find('readingLevels/level1').text }}, Level2: {{
+        book.find('readingLevels/level2').text }}, Level3: {{
+        book.find('readingLevels/level3').text }}
+      </p>
+      <br />
+      <a href="{{ url_for('index') }}">Back to Home</a>
+    </div>
+  </body>
+</html>
