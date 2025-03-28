@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for, flash
 from lxml import etree
 
 app = Flask(__name__)
-
+app.secret_key = "some_secret_key"
 
 XML_FILE = "books.xml"
 XSL_FILE = "books.xsl"
@@ -22,6 +22,7 @@ def index():
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
     if request.method == 'POST':
+        # Retrieve and strip input values to remove extra spaces.
         title = request.form.get('title', '').strip()
         theme1 = request.form.get('theme1', '').strip()
         theme2 = request.form.get('theme2', '').strip()
@@ -29,14 +30,26 @@ def add_book():
         level2 = request.form.get('level2', '').strip()
         level3 = request.form.get('level3', '').strip()
 
-        # Basic validation
+        # Basic Validation: Ensure no field is empty.
         if not title or not theme1 or not theme2 or not level1 or not level2 or not level3:
             flash("All fields are required for adding a book.", "error")
             return redirect(url_for('add_book'))
 
+        # Optional: Validate that the provided reading levels are among allowed values.
+        allowed_levels = {"Beginner", "Intermediate", "Advanced"}
+        if level1 not in allowed_levels or level2 not in allowed_levels or level3 not in allowed_levels:
+            flash("Reading levels must be one of: Beginner, Intermediate, Advanced.", "error")
+            return redirect(url_for('add_book'))
+
+        # Additional validations can be added here (e.g., ensuring two distinct themes, checking length of title, etc.)
+
+        # If all validations pass, load XML, add the new book, and save.
         tree = load_xml()
+
         root = tree.getroot()
-        new_book = etree.SubElement(root, "book")
+
+        # Create the new book element (as before)
+        new_book = etree.Element("book")
         etree.SubElement(new_book, "title").text = title
         themes_elem = etree.SubElement(new_book, "themes")
         etree.SubElement(themes_elem, "theme").text = theme1
@@ -45,10 +58,24 @@ def add_book():
         etree.SubElement(rl_elem, "level1").text = level1
         etree.SubElement(rl_elem, "level2").text = level2
         etree.SubElement(rl_elem, "level3").text = level3
+
+        # Find the first user element (if any) to determine the correct insertion point.
+        users = root.findall("user")
+        if users:
+            # Insert the new book before the first user element.
+            index = root.index(users[0])
+            root.insert(index, new_book)
+        else:
+            # No user exists, so append the book.
+            root.append(new_book)
+
+        # Save updated XML file.
         save_xml(tree)
         flash("Book added successfully!", "success")
         return redirect(url_for('index'))
+        
     return render_template('add_book.html')
+
 
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():

@@ -240,6 +240,18 @@
       <level3>Advanced</level3>
     </readingLevels>
   </book>
+  <book>
+    <title>titlu</title>
+    <themes>
+      <theme>mystery</theme>
+      <theme>fantasy</theme>
+    </themes>
+    <readingLevels>
+      <level1>Beginner</level1>
+      <level2>Intermediate</level2>
+      <level3>Advanced</level3>
+    </readingLevels>
+  </book>
   <user>
     <name>John</name>
     <surname>Doe</surname>
