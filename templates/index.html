@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Book List</title>
+    <meta charset="utf-8" />
+    <title>All Books</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -17,25 +18,28 @@
         <a href="{{ url_for('books_by_theme') }}">Filter by Theme</a> |
         <a href="{{ url_for('transform') }}">XSL Transformation</a>
       </nav>
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %}
-      <ul class="flashes">
-        {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %} {% endwith %}
-      <ul>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class="flashes">
+            {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+
+      <div class="book-list">
         {% for book in books %}
-        <li>
-          <a
-            href="{{ url_for('book_details', title=book.find('title').text) }}"
-          >
-            {{ book.find('title').text }}
-          </a>
-        </li>
+          <div class="book-item">
+            <h2 class="book-title">
+              <a href="{{ url_for('book_details', title=book.find('title').text) }}">
+                {{ book.find('title').text }}
+              </a>
+            </h2>
+          </div>
         {% endfor %}
-      </ul>
+      </div>
     </div>
   </body>
 </html>

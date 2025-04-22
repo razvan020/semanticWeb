@@ -1,74 +1,88 @@
+import os
 import requests
-from bs4 import BeautifulSoup
 import random
+from bs4 import BeautifulSoup
 from lxml import etree
 
-url = "https://reedsy.com/discovery/blog/best-books-to-read-in-a-lifetime"
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+# ─── CONFIG ─────────────────────────────────────────────────────
+XML_FILE      = "books.xml"
+XSD_FILENAME  = "books.xsd"
+URL           = "https://reedsy.com/discovery/blog/best-books-to-read-in-a-lifetime"
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/115.0.0.0 Safari/537.36"
+    )
 }
 
-response = requests.get(url, headers=headers)
-if response.status_code != 200:
-    print("Failed to retrieve the page, status code:", response.status_code)
-    exit()
+theme_options  = ["Science Fiction", "Mystery", "Fantasy", "Romance", "Historical", "Thriller"]
+reading_levels = ["Beginner", "Intermediate", "Advanced"]
 
-soup = BeautifulSoup(response.text, 'html.parser')
+# ─── 1. Fetch & parse the page ─────────────────────────────────
+resp = requests.get(URL, headers=HEADERS)
+resp.raise_for_status()
+soup = BeautifulSoup(resp.text, "html.parser")
+
+# ─── 2. Pull exactly the on‑screen book titles from the H2s ─────
 titles = []
-
-for tag in soup.find_all('h2'):
-    text = tag.get_text().strip()
-    if text and len(text) > 5:
+for blot in soup.select("div.book-blot"):
+    h2 = blot.find("h2")
+    if not h2:
+        continue
+    text = h2.get_text(strip=True)
+    # e.g. "1. 1984 by George Orwell"
+    if text and text not in titles:
         titles.append(text)
     if len(titles) >= 20:
         break
+
 if len(titles) < 20:
-    for tag in soup.find_all('h3'):
-        text = tag.get_text().strip()
-        if text and text not in titles:
-            titles.append(text)
-        if len(titles) >= 20:
-            break
+    raise RuntimeError(f"Only found {len(titles)} book titles; expected 20")
 
-if not titles:
-    print("No book titles found. Exiting.")
-    exit()
+# ─── 3. Load existing XML or create it ──────────────────────────
+if os.path.exists(XML_FILE):
+    tree = etree.parse(XML_FILE)
+    root = tree.getroot()
+else:
+    nsmap = {"xsi": "http://www.w3.org/2001/XMLSchema-instance"}
+    root = etree.Element("library", nsmap=nsmap)
+    root.set(
+        "{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation",
+        XSD_FILENAME
+    )
+    tree = etree.ElementTree(root)
 
-theme_options = ["Science Fiction", "Mystery", "Fantasy", "Romance", "Historical", "Thriller"]
-reading_levels = ["Beginner", "Intermediate", "Advanced"]
+# ─── 4. Remove old <book> nodes (keep all <user> in place) ─────
+for old in root.findall("book"):
+    root.remove(old)
 
-nsmap = {"xsi": "http://www.w3.org/2001/XMLSchema-instance"}
-library = etree.Element("library", nsmap=nsmap)
-library.set("{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation", "books.xsd")
+# ─── 5. Find where users start so we can insert books before them ─
+users = root.findall("user")
+insert_idx = root.index(users[0]) if users else len(root)
 
-for title in titles[:20]:
-    book_elem = etree.SubElement(library, "book")
-    title_elem = etree.SubElement(book_elem, "title")
-    title_elem.text = title
-    themes_elem = etree.SubElement(book_elem, "themes")
-    theme_elem1 = etree.SubElement(themes_elem, "theme")
-    theme_elem1.text = random.choice(theme_options)
-    theme_elem2 = etree.SubElement(themes_elem, "theme")
-    theme_elem2.text = random.choice(theme_options)
-    rl_elem = etree.SubElement(book_elem, "readingLevels")
-    level1 = etree.SubElement(rl_elem, "level1")
-    level1.text = reading_levels[0]
-    level2 = etree.SubElement(rl_elem, "level2")
-    level2.text = reading_levels[1]
-    level3 = etree.SubElement(rl_elem, "level3")
-    level3.text = reading_levels[2]
+# ─── 6. Insert the 20 new <book> entries ───────────────────────
+for title in titles:
+    book = etree.Element("book")
+    etree.SubElement(book, "title").text = title
 
-user_elem = etree.SubElement(library, "user")
-name_elem = etree.SubElement(user_elem, "name")
-name_elem.text = "John"
-surname_elem = etree.SubElement(user_elem, "surname")
-surname_elem.text = "Doe"
-readingLevel_elem = etree.SubElement(user_elem, "readingLevel")
-readingLevel_elem.text = "Intermediate"
-preferredTheme_elem = etree.SubElement(user_elem, "preferredTheme")
-preferredTheme_elem.text = "Mystery"
+    themes_el = etree.SubElement(book, "themes")
+    for th in random.sample(theme_options, 2):
+        etree.SubElement(themes_el, "theme").text = th
 
-tree = etree.ElementTree(library)
-tree.write("books.xml", pretty_print=True, xml_declaration=True, encoding="UTF-8")
-print("books.xml generated successfully with {} books and 1 user.".format(len(titles[:20])))
+    rl_el = etree.SubElement(book, "readingLevels")
+    for lvl in random.sample(reading_levels, k=random.randint(1, 3)):
+        etree.SubElement(rl_el, "level").text = lvl
+
+    root.insert(insert_idx, book)
+    insert_idx += 1
+
+# ─── 7. Write back to books.xml ────────────────────────────────
+tree.write(
+    XML_FILE,
+    pretty_print=True,
+    xml_declaration=True,
+    encoding="UTF-8"
+)
+
+print(f"✅ {XML_FILE} updated: {len(titles)} exact screen‑titles inserted; users preserved.")

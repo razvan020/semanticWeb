@@ -22,58 +22,57 @@ def index():
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
     if request.method == 'POST':
-        # Retrieve and strip input values to remove extra spaces.
-        title = request.form.get('title', '').strip()
-        theme1 = request.form.get('theme1', '').strip()
-        theme2 = request.form.get('theme2', '').strip()
-        level1 = request.form.get('level1', '').strip()
-        level2 = request.form.get('level2', '').strip()
-        level3 = request.form.get('level3', '').strip()
+        # 1) Collect inputs
+        title  = request.form.get('title', '').strip()
+        themes = request.form.getlist('theme')    # exactly two items
+        levels = request.form.getlist('levels')   # 1–3 items
 
-        # Basic Validation: Ensure no field is empty.
-        if not title or not theme1 or not theme2 or not level1 or not level2 or not level3:
-            flash("All fields are required for adding a book.", "error")
+        # 2) Server‑side validation
+        if not title:
+            flash("Title is required.", "error")
             return redirect(url_for('add_book'))
 
-        # Optional: Validate that the provided reading levels are among allowed values.
-        allowed_levels = {"Beginner", "Intermediate", "Advanced"}
-        if level1 not in allowed_levels or level2 not in allowed_levels or level3 not in allowed_levels:
-            flash("Reading levels must be one of: Beginner, Intermediate, Advanced.", "error")
+        if len(themes) != 2 or themes[0] == themes[1]:
+            flash("Please select two **different** themes.", "error")
             return redirect(url_for('add_book'))
 
-        # Additional validations can be added here (e.g., ensuring two distinct themes, checking length of title, etc.)
+        if len(levels) < 1:
+            flash("Please select at least one reading level.", "error")
+            return redirect(url_for('add_book'))
 
-        # If all validations pass, load XML, add the new book, and save.
+        allowed = {"Beginner", "Intermediate", "Advanced"}
+        if any(l not in allowed for l in levels):
+            flash("Invalid reading level choice.", "error")
+            return redirect(url_for('add_book'))
+
+        # 3) Build the <book> element
         tree = load_xml()
-
         root = tree.getroot()
 
-        # Create the new book element (as before)
         new_book = etree.Element("book")
         etree.SubElement(new_book, "title").text = title
-        themes_elem = etree.SubElement(new_book, "themes")
-        etree.SubElement(themes_elem, "theme").text = theme1
-        etree.SubElement(themes_elem, "theme").text = theme2
-        rl_elem = etree.SubElement(new_book, "readingLevels")
-        etree.SubElement(rl_elem, "level1").text = level1
-        etree.SubElement(rl_elem, "level2").text = level2
-        etree.SubElement(rl_elem, "level3").text = level3
 
-        # Find the first user element (if any) to determine the correct insertion point.
+        themes_elem = etree.SubElement(new_book, "themes")
+        for th in themes:
+            etree.SubElement(themes_elem, "theme").text = th
+
+        rl_elem = etree.SubElement(new_book, "readingLevels")
+        for lvl in levels:
+            etree.SubElement(rl_elem, "level").text = lvl
+
+        # 4) Insert before first <user> (if any), else append
         users = root.findall("user")
         if users:
-            # Insert the new book before the first user element.
-            index = root.index(users[0])
-            root.insert(index, new_book)
+            idx = root.index(users[0])
+            root.insert(idx, new_book)
         else:
-            # No user exists, so append the book.
             root.append(new_book)
 
-        # Save updated XML file.
         save_xml(tree)
         flash("Book added successfully!", "success")
         return redirect(url_for('index'))
-        
+
+    # GET → render form
     return render_template('add_book.html')
 
 
@@ -101,38 +100,73 @@ def add_user():
         return redirect(url_for('index'))
     return render_template('add_user.html')
 
-@app.route('/recommend')
+@app.route('/recommend', methods=['GET', 'POST'])
 def recommend():
     tree = load_xml()
-    # Select the first user from the XML
     users = tree.xpath('/library/user')
     if not users:
-        flash("No user available for recommendations.", "error")
+        flash("No users available for recommendations.", "error")
         return redirect(url_for('index'))
-    user = users[0]
+
+    # Default to first user
+    selected_idx = 0
+    if request.method == 'POST':
+        try:
+            selected_idx = int(request.form['user_index'])
+            if selected_idx < 0 or selected_idx >= len(users):
+                raise IndexError
+        except (KeyError, ValueError, IndexError):
+            flash("Invalid user selection.", "error")
+            return redirect(url_for('recommend'))
+
+    user = users[selected_idx]
     user_level = user.xpath('readingLevel/text()')[0]
     user_theme = user.xpath('preferredTheme/text()')[0]
-    # Recommend by reading level (using level2)
-    books_by_level = tree.xpath(f"/library/book[readingLevels/level2='{user_level}']")
-    # Recommend by both reading level and theme (note: theme is inside <themes>)
-    books_by_level_theme = tree.xpath(f"/library/book[readingLevels/level2='{user_level}' and themes/theme='{user_theme}']")
-    return render_template('recommend.html',
-                           books_by_level=books_by_level,
-                           books_by_level_theme=books_by_level_theme,
-                           user_level=user_level,
-                           user_theme=user_theme)
 
+    # Match any of the three levels
+    books_by_level = tree.xpath(
+        f"/library/book[readingLevels/* = $lvl]",
+        lvl=user_level
+    )
+    # Match both level & theme
+    books_by_level_theme = tree.xpath(
+        f"/library/book[readingLevels/* = $lvl and themes/theme = $th]",
+        lvl=user_level, th=user_theme
+    )
+
+    return render_template(
+        'recommend.html',
+        users=users,
+        selected_idx=selected_idx,
+        books_by_level=books_by_level,
+        books_by_level_theme=books_by_level_theme,
+        user_level=user_level,
+        user_theme=user_theme
+    )
+    
+    
 @app.route('/book/<title>')
 def book_details(title):
     tree = load_xml()
-    # Use XPath to find the book by title
-    books = tree.xpath("/library/book[title=$t]", t=title)
-
+    # find the book by title
+    books = tree.xpath("/library/book[title = $t]", t=title)
     if not books:
         flash("Book not found.", "error")
         return redirect(url_for('index'))
+
     book = books[0]
-    return render_template('book_details.html', book=book)
+
+    # extract the data we need
+    book_title = book.findtext('title')
+    themes     = book.xpath('themes/theme/text()')               # list of theme strings
+    levels     = book.xpath('readingLevels/level/text()')        # list of level strings
+
+    return render_template(
+        'book_details.html',
+        title=book_title,
+        themes=themes,
+        levels=levels
+    )
 
 @app.route('/books_by_theme', methods=['GET', 'POST'])
 def books_by_theme():
@@ -148,14 +182,35 @@ def books_by_theme():
         return render_template('books_by_theme.html', books=books, theme_list=theme_list, selected_theme=selected_theme)
     return render_template('books_by_theme.html', theme_list=theme_list)
 
-@app.route('/transform')
+@app.route('/transform', methods=['GET', 'POST'])
 def transform():
     xml_tree = load_xml()
-    xslt_tree = etree.parse(XSL_FILE)
-    transform = etree.XSLT(xslt_tree)
-    # Optionally, if you want to pass a parameter dynamically:
-    result_tree = transform(xml_tree, userLevel=etree.XSLT.strparam("Intermediate"))
-    return str(result_tree)
+    users = xml_tree.xpath('/library/user')
+    if not users:
+        flash("No users defined yet.", "error")
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        # user index from the dropdown
+        try:
+            idx = int(request.form['user_index'])
+            user = users[idx]
+        except (KeyError, ValueError, IndexError):
+            flash("Invalid user selection.", "error")
+            return redirect(url_for('transform'))
+
+        user_level = user.xpath('readingLevel/text()')[0]
+
+        # apply XSL with dynamic userLevel param
+        xslt_tree = etree.parse(XSL_FILE)
+        transform = etree.XSLT(xslt_tree)
+        result = transform(xml_tree,
+                           userLevel=etree.XSLT.strparam(user_level))
+        # return the HTML produced by XSLT
+        return str(result)
+
+    # GET → show a simple user‑picker form
+    return render_template('select_user_transform.html', users=users)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="utf-8" />
     <title>Recommendations</title>
     <link
       rel="stylesheet"
@@ -9,7 +10,34 @@
   </head>
   <body>
     <div class="container">
+
+      <!-- navigation -->
+      <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('add_book') }}">Add Book</a>
+        <a href="{{ url_for('add_user') }}">Add User</a>
+        <a href="{{ url_for('recommend') }}">Recommend</a>
+        <a href="{{ url_for('books_by_theme') }}">By Theme</a>
+      </nav>
+
       <h1>Book Recommendations</h1>
+
+      <!-- user selector form -->
+      <form method="post" action="{{ url_for('recommend') }}">
+        <label for="user_index">Select User:</label>
+        <select name="user_index" id="user_index">
+          {% for u in users %}
+            <option value="{{ loop.index0 }}"
+              {% if loop.index0 == selected_idx %}selected{% endif %}>
+              {{ u.find('name').text }} {{ u.find('surname').text }}
+            </option>
+          {% endfor %}
+        </select>
+        <input type="submit" value="Show Recommendations" />
+      </form>
+
+      <hr />
+
       <p>
         <strong>User Reading Level:</strong> {{ user_level }}<br />
         <strong>Preferred Theme:</strong> {{ user_theme }}
@@ -18,30 +46,35 @@
       <h2>Books by Reading Level</h2>
       <ul>
         {% for book in books_by_level %}
-        <li>
-          <a
-            href="{{ url_for('book_details', title=book.find('title').text) }}"
-          >
-            {{ book.find('title').text }}
-          </a>
-        </li>
+          <li>
+            <a
+              href="{{ url_for('book_details', title=book.find('title').text) }}"
+            >
+              {{ book.find('title').text }}
+            </a>
+          </li>
+        {% else %}
+          <li><em>No books at this reading level.</em></li>
         {% endfor %}
       </ul>
 
       <h2>Books by Reading Level and Preferred Theme</h2>
       <ul>
         {% for book in books_by_level_theme %}
-        <li>
-          <a
-            href="{{ url_for('book_details', title=book.find('title').text) }}"
-          >
-            {{ book.find('title').text }}
-          </a>
-        </li>
+          <li>
+            <a
+              href="{{ url_for('book_details', title=book.find('title').text) }}"
+            >
+              {{ book.find('title').text }}
+            </a>
+          </li>
+        {% else %}
+          <li><em>No books match both your level and theme.</em></li>
         {% endfor %}
       </ul>
+
       <br />
-      <a href="{{ url_for('index') }}">Back to Home</a>
+      <a href="{{ url_for('index') }}">← Back to Home</a>
     </div>
   </body>
 </html>
